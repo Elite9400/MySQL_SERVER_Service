@@ -3,9 +3,9 @@ color 02
 
 :: Richiedi l'avvio come amministratore
 echo.
-echo==================================================
+echo ==================================================
 echo CONTROLLO PRIVILEGI AMMINISTRATORE
-echo==================================================
+echo ==================================================
 echo.
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 
@@ -19,33 +19,31 @@ if %errorlevel% neq 0 (
 echo Privilegi controllati e garantiti.
 
 :: Il codice qui di seguito verrà eseguito solo se l'avvio come amministratore è stato consentito
-set serviceName=MySQL80
+set "serviceName=MySQL80"
 echo. 
-echo==================================================
-echo Controllo STATUS Servizio : %serviceName%
-echo==================================================
+echo ==================================================
+echo Controllo STATUS Servizio: %serviceName%
+echo ==================================================
 echo. 
 
 REM Verifica lo stato del servizio
-
-sc query %serviceName% | find "RUNNING"
+sc query "%serviceName%" | find "RUNNING" >nul
 
 if %errorlevel% equ 0 (
     REM Il servizio è in esecuzione, quindi lo spegne
-    net stop %serviceName%
+    net stop "%serviceName%"
     echo.
     echo Il servizio %serviceName% è stato spento.
 ) else (
     REM Il servizio non è in esecuzione, quindi lo accende
-    net start %serviceName%
+    net start "%serviceName%"
     echo.
     echo Il servizio %serviceName% è stato acceso.
 )
 
-
 :LOOP
 REM Verifica lo stato del servizio
-sc query %serviceName% | find "RUNNING"
+sc query "%serviceName%" | find "RUNNING" >nul
 if %errorlevel% equ 0 (
     REM Il servizio è in esecuzione
     echo.
@@ -59,6 +57,6 @@ if %errorlevel% equ 0 (
 )
 
 REM Attendere 60 secondi
-ping -n 10 127.0.0.1 >nul 2>&1
+timeout /t 60 /nobreak >nul
 
 goto LOOP
